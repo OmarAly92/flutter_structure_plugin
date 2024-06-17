@@ -1,2 +1,8 @@
-rootProject.name = "clean_architecture_plugin"
-rootProject.buildFileName = "build.gradle.kts"
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = "flutter_clean_arc_generator"
