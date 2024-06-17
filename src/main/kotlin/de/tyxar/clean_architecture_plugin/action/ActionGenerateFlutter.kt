@@ -38,7 +38,7 @@ class ActionGenerateFlutter : AnAction() {
 
         var folder = if (selected.isDirectory) selected else selected.parent
         WriteCommandAction.runWriteCommandAction(project) {
-            if (root != null && root.isNotBlank()) {
+            if (!root.isNullOrBlank()) {
                 val result = Generator.createFolder(
                     project, folder, root
                 ) ?: return@runWriteCommandAction
@@ -48,18 +48,13 @@ class ActionGenerateFlutter : AnAction() {
                 val mapOrFalse = Generator.createFolder(
                     project, folder,
                     "data",
-                    "repository"
+                    "repository", "model"
                 ) ?: return@runWriteCommandAction
                 mapOrFalse["data"]?.let { data: VirtualFile ->
                     Generator.createFolder(
                         project, data,
-                        "local",
-                        "model", "data_source"
-                    )
-                    Generator.createFolder(
-                        project, data,
-                        "remote",
-                        "model", "data_source"
+                        "data_source",
+                        "remote", "local"
                     )
                 }
             } else {
@@ -74,6 +69,7 @@ class ActionGenerateFlutter : AnAction() {
                 "domain",
                 "repository", "use_case", "entity"
             )
+
             /// ui folder
             val uiResult = Generator.createFolder(project, folder, "presentation", "logic", "ui")
             val uiFolder = uiResult?.get("ui")
