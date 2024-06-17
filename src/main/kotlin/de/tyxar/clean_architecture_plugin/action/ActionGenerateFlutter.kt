@@ -8,9 +8,11 @@ package de.tyxar.clean_architecture_plugin.action
 
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import de.tyxar.clean_architecture_plugin.generator.Generator
 import de.tyxar.clean_architecture_plugin.ui.FeatureDialog
+import java.io.IOException
 
 /**
  * Flutter action in the context menu
@@ -64,11 +66,20 @@ class ActionGenerateFlutter : AnAction() {
                     "repository", "data_source", "model"
                 )
             }
-            Generator.createFolder(
+
+            /// domain layer
+            val domainResult = Generator.createFolder(
                 project, folder,
                 "domain",
                 "repository", "use_case", "entity"
             )
+
+            // Create a Dart file with the name of the root inside the repository folder in the domain
+            val repositoryFolder = domainResult?.get("domain")?.findChild("repository")
+            if (repositoryFolder != null && root != null) {
+                val content = getFileContent(root)
+                createDartFile( repositoryFolder, root, content)
+            }
 
             /// ui folder
             val uiResult = Generator.createFolder(project, folder, "presentation", "logic", "ui")
@@ -77,5 +88,37 @@ class ActionGenerateFlutter : AnAction() {
                 Generator.createFolder(project, uiFolder, "widgets")
             }
         }
+    }
+
+    private fun createDartFile(
+        directory: VirtualFile,
+        fileName: String,
+        content: String
+    ) {
+        val dartFileName = "$fileName.dart"
+        val dartFile = directory.findOrCreateChildData(this, dartFileName)
+        try {
+            VfsUtil.saveText(dartFile, content)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+
+    private fun getFileContent(root: String): String {
+        val className = snakeToCamelCase(root)
+        val content = """
+           abstract class $className {}
+           
+          """.trimIndent()
+        return content
+
+    }
+
+
+
+
+    private fun snakeToCamelCase(snake: String): String {
+        return snake.split('_').joinToString("") { it.capitalize() }
     }
 }
