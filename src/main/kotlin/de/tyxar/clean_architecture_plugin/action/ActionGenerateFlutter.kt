@@ -143,10 +143,15 @@ class ActionGenerateFlutter : AnAction() {
             /**
              * Generates Presentation Layer
              */
-            val uiResult = Generator.createFolder(project, folder, "presentation", "logic", "ui")
-            val uiFolder = uiResult?.get("ui")
-            if (uiFolder != null) {
-                Generator.createFolder(project, uiFolder, "widgets")
+            val presentationResult = Generator.createFolder(project, folder, "presentation", "example_screen")
+            val presentationFolder = presentationResult?.get("example_screen")
+            if (presentationFolder != null) {
+                val uiResult =  Generator.createFolder(project, presentationFolder, "ui")
+                val uiFolder = uiResult?.get("ui")
+                if (uiFolder != null) {
+                    Generator.createFolder(project, uiFolder, "widget")
+                }
+                Generator.createFolder(project, presentationFolder, "logic")
             }
         }
     }
