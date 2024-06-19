@@ -49,6 +49,10 @@ class ActionGenerateFlutter : AnAction() {
                 ) ?: return@runWriteCommandAction
                 folder = result[root]
             }
+
+            /**
+             * Generates Data Layer
+             */
             if (splitSource != null && splitSource) {
                 val mapOrFalse = Generator.createFolder(
                     project, folder,
@@ -61,6 +65,34 @@ class ActionGenerateFlutter : AnAction() {
                         "data_source",
                         "remote", "local"
                     )
+
+
+                    /**
+                     * Generates Remote Data Source Dart file
+                     */
+                    val remoteDataSourceFolder = mapOrFalse["data"]?.findChild("data_source")?.findChild("remote")
+                    if (remoteDataSourceFolder != null && root != null) {
+                        val content = getDataSourceFileContent(root, false)
+                        createDartFile(remoteDataSourceFolder, root + "_remote_data_source", content)
+                    }
+
+                    /**
+                     * Generates Local Data Source Dart file
+                     */
+                    val localDataSourceFolder = mapOrFalse["data"]?.findChild("data_source")?.findChild("local")
+                    if (localDataSourceFolder != null && root != null) {
+                        val content = getDataSourceFileContent(root, true)
+                        createDartFile(localDataSourceFolder, root + "_local_data_source", content)
+                    }
+
+                    /**
+                     * Generates Repository Imp Dart file
+                     */
+                    val repositoryFolder = mapOrFalse["data"]?.findChild("repository")
+                    if (repositoryFolder != null && root != null) {
+                        val content = getRepositoryFileContent(root, false, project, selected)
+                        createDartFile(repositoryFolder, root + "_repository", content)
+                    }
                 }
             } else {
                 val dataResult = Generator.createFolder(
@@ -69,27 +101,48 @@ class ActionGenerateFlutter : AnAction() {
                     "repository", "data_source", "model"
                 )
 
+                /**
+                 * Generates Remote Data Source Dart file
+                 */
+                val dataSourceFolder = dataResult?.get("data")?.findChild("data_source")
+                if (dataSourceFolder != null && root != null) {
+                    val content = getDataSourceFileContent(root, false)
+                    createDartFile(dataSourceFolder, root + "_remote_data_source", content)
+                }
+
+                /**
+                 * Generates Repository Imp Dart file
+                 */
                 val repositoryFolder = dataResult?.get("data")?.findChild("repository")
                 if (repositoryFolder != null && root != null) {
-                    val content = getRepositoryFileContent(root, false, project)
+                    val content = getRepositoryFileContent(root, false, project, selected)
                     createDartFile(repositoryFolder, root + "_repository", content)
                 }
             }
 
-            /// domain layer
+
+            /**
+             * Generates Domain Layer
+             */
             val domainResult = Generator.createFolder(
                 project, folder,
                 "domain",
                 "repository", "use_case", "entity"
             )
-            // Create a Dart file with the name of the root inside the repository folder in the domain
+
+
+            /**
+             * Generates Abstract Repository Dart file
+             */
             val repositoryFolder = domainResult?.get("domain")?.findChild("repository")
             if (repositoryFolder != null && root != null) {
-                val content = getRepositoryFileContent(root, true, project)
+                val content = getRepositoryFileContent(root, true, project, selected)
                 createDartFile(repositoryFolder, root + "_repository", content)
             }
 
-            /// ui folder
+            /**
+             * Generates Presentation Layer
+             */
             val uiResult = Generator.createFolder(project, folder, "presentation", "logic", "ui")
             val uiFolder = uiResult?.get("ui")
             if (uiFolder != null) {
@@ -115,7 +168,8 @@ class ActionGenerateFlutter : AnAction() {
     private fun getRepositoryFileContent(
         root: String,
         isAbstract: Boolean = false,
-        project: Project
+        project: Project,
+        selected: VirtualFile
     ): String {
         val className = snakeToCamelCase(root) + "Repository"
         if (isAbstract) {
@@ -125,12 +179,24 @@ class ActionGenerateFlutter : AnAction() {
             return content
         } else {
             val content = """
-           import 'package:${project.name}/features/aut/domain/repository/aut_repository.dart';
+           import 'package:${project.name}/${selected.name}/$root/domain/repository/${root}_repository.dart';
 
            class ${className + "Imp"} implements $className  {}
           """.trimIndent()
             return content
         }
+    }
+    private fun getDataSourceFileContent(
+        root: String,
+        isLocal: Boolean = false,
+    ): String {
+        val className = snakeToCamelCase(root) + "${if(isLocal) "Local" else "Remote"}DataSource"
+        val content = """
+           abstract class $className {}
+
+           class ${className + "Imp"} implements $className  {}
+          """.trimIndent()
+        return content
     }
 
     private fun convertToSnakeCase(input: String): String {
