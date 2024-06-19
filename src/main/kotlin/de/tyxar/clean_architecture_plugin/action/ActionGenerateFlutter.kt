@@ -1,9 +1,3 @@
-/*
- * Copyright: Copyright (c) 2019 Arne Rantzen <arne@rantzen.net>
- * License: GPL-3
- * Last Edited: 08.12.19, 00:03
- */
-
 package de.tyxar.clean_architecture_plugin.action
 
 import com.intellij.openapi.actionSystem.*
