@@ -8,6 +8,7 @@ package de.tyxar.clean_architecture_plugin.action
 
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import de.tyxar.clean_architecture_plugin.generator.Generator
@@ -20,6 +21,8 @@ import java.io.IOException
  * This class will call the dialog and generate the Flutter Clean-Architecture structure
  */
 class ActionGenerateFlutter : AnAction() {
+
+
     /**
      * Is called by the context action menu entry with an [actionEvent]
      */
@@ -34,10 +37,10 @@ class ActionGenerateFlutter : AnAction() {
      * Generates the Flutter Clean-Architecture structure in a [dataContext].
      * If a [root] String is provided, it will create the structure in a new folder.
      */
-    private fun generate(dataContext: DataContext, root: String?, splitSource: Boolean?) {
+    private fun generate(dataContext: DataContext, fileRoot: String?, splitSource: Boolean?) {
         val project = CommonDataKeys.PROJECT.getData(dataContext) ?: return
         val selected = PlatformDataKeys.VIRTUAL_FILE.getData(dataContext) ?: return
-
+        val root = fileRoot?.let { convertToSnakeCase(it) }
         var folder = if (selected.isDirectory) selected else selected.parent
         WriteCommandAction.runWriteCommandAction(project) {
             if (!root.isNullOrBlank()) {
@@ -60,11 +63,17 @@ class ActionGenerateFlutter : AnAction() {
                     )
                 }
             } else {
-                Generator.createFolder(
+                val dataResult = Generator.createFolder(
                     project, folder,
                     "data",
                     "repository", "data_source", "model"
                 )
+
+                val repositoryFolder = dataResult?.get("data")?.findChild("repository")
+                if (repositoryFolder != null && root != null) {
+                    val content = getRepositoryFileContent(root, false, project)
+                    createDartFile(repositoryFolder, root + "_repository", content)
+                }
             }
 
             /// domain layer
@@ -73,12 +82,11 @@ class ActionGenerateFlutter : AnAction() {
                 "domain",
                 "repository", "use_case", "entity"
             )
-
             // Create a Dart file with the name of the root inside the repository folder in the domain
             val repositoryFolder = domainResult?.get("domain")?.findChild("repository")
             if (repositoryFolder != null && root != null) {
-                val content = getFileContent(root)
-                createDartFile( repositoryFolder, root, content)
+                val content = getRepositoryFileContent(root, true, project)
+                createDartFile(repositoryFolder, root + "_repository", content)
             }
 
             /// ui folder
@@ -104,18 +112,39 @@ class ActionGenerateFlutter : AnAction() {
         }
     }
 
-
-    private fun getFileContent(root: String): String {
-        val className = snakeToCamelCase(root)
-        val content = """
+    private fun getRepositoryFileContent(
+        root: String,
+        isAbstract: Boolean = false,
+        project: Project
+    ): String {
+        val className = snakeToCamelCase(root) + "Repository"
+        if (isAbstract) {
+            val content = """
            abstract class $className {}
-           
           """.trimIndent()
-        return content
+            return content
+        } else {
+            val content = """
+           import 'package:${project.name}/features/aut/domain/repository/aut_repository.dart';
 
+           class ${className + "Imp"} implements $className  {}
+          """.trimIndent()
+            return content
+        }
     }
 
+    private fun convertToSnakeCase(input: String): String {
+        return input.fold(StringBuilder()) { acc, c ->
+            when {
+                c.isUpperCase() -> {
+                    if (acc.isNotEmpty()) acc.append('_')
+                    acc.append(c.lowercaseChar())
+                }
 
+                else -> acc.append(c)
+            }
+        }.toString()
+    }
 
 
     private fun snakeToCamelCase(snake: String): String {
