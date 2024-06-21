@@ -44,6 +44,6 @@ class FeatureDialog(project: Project?) :
 
     init {
         init()
-        title = "Clean-Architecture Generator"
+        title = "Flutter Clean-Arch Generator"
     }
 }
