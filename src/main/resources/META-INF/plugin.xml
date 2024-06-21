@@ -15,16 +15,16 @@
     <depends>com.intellij.modules.platform</depends>
 
     <actions>
-        <group class="de.tyxar.clean_architecture_plugin.action.ActionGroup"
-                description="Choose a Clean-Architecture variant"
-                id="de.tyxar.clean_architecture_plugin" popup="true"
-                text="Clean Generator">
+        <action
+            id="de.tyxar.clean_architecture_plugin.action.CleanGeneratorAction"
+            class="de.tyxar.clean_architecture_plugin.action.ActionGenerateFlutter"
+            text="Flutter Clean Generator"
+            icon="AllIcons.Actions.NewFolder"
+            description="Trigger clean generator">
             <add-to-group anchor="after"
-                    group-id="NewGroup" relative-to-action="NewDir" />
-            <action class="de.tyxar.clean_architecture_plugin.action.ActionGenerateFlutter"
-                    description="Generate a new Clean-Architecture for Flutter"
-                    id="de.tyxar.clean_architecture_plugin.action.ActionGenerateFlutter"
-                    text="Flutter"/>
-        </group>
+                group-id="NewGroup" relative-to-action="NewDir" />
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl t"/>
+        </action>
     </actions>
+
 </idea-plugin>
