@@ -1,13 +1,13 @@
 <idea-plugin>
     <id>de.tyxar.clean_architecture_plugin</id>
     <name>Clean Architecture for Flutter</name>
-    <vendor email="arne@rantzen.net" url="http://rantzen.net">Tyx</vendor>
+    <version>1.0.0</version>
+    <vendor email="omarplaystation8888@gmail.com" url="https://github.com/OmarAly92">Tyx</vendor>
 
     <description><![CDATA[
     Adds a generator to the <em>New</em> context menu to create the Clean-Architecture folder structure for a given feature.
     ]]></description>
 
-    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
     <idea-version since-build="191.8026.42" />
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html

@@ -5,4 +5,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "flutter_clean_arc_generator"
+rootProject.name = "flutter_structures_plugin"
