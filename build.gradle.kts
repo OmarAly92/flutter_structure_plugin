@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.flutter-structures"
-version = "1.0-SNAPSHOT"
+version = "1.0.3-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -16,7 +16,6 @@ repositories {
 intellij {
     version.set("2023.1.5")
     type.set("IC") // Target IDE Platform
-
     plugins.set(listOf(/* Plugin Dependencies */))
 }
 
@@ -31,8 +30,7 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("231")
-        untilBuild.set("241.*")
+        sinceBuild.set("212")
     }
 
     signPlugin {

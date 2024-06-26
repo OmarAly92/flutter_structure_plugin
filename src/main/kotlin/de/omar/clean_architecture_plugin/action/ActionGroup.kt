@@ -4,7 +4,7 @@
  * Last Edited: 07.12.19, 22:13
  */
 
-package de.tyxar.clean_architecture_plugin.action
+package de.omar.clean_architecture_plugin.action
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent

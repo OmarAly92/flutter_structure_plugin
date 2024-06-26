@@ -1,12 +1,12 @@
-package de.tyxar.clean_architecture_plugin.action
+package de.omar.clean_architecture_plugin.action
 
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import de.tyxar.clean_architecture_plugin.generator.Generator
-import de.tyxar.clean_architecture_plugin.ui.FeatureDialog
+import de.omar.clean_architecture_plugin.generator.Generator
+import de.omar.clean_architecture_plugin.ui.FeatureDialog
 import java.io.IOException
 
 /**

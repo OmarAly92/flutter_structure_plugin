@@ -4,7 +4,7 @@
  * Last Edited: 07.12.19, 22:29
  */
 
-package de.tyxar.clean_architecture_plugin.ui
+package de.omar.clean_architecture_plugin.ui
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType

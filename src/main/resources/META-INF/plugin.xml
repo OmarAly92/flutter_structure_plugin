@@ -1,8 +1,8 @@
 <idea-plugin>
-    <id>de.tyxar.clean_architecture_plugin</id>
-    <name>Clean Architecture for Flutter</name>
-    <version>1.0.0</version>
-    <vendor email="omarplaystation8888@gmail.com" url="https://github.com/OmarAly92">Tyx</vendor>
+    <id>de.omar.clean_architecture_plugin</id>
+    <name>Flutter Structure Generator</name>
+    <version>1.0.2</version>
+    <vendor email="omarplaystation8888@gmail.com" url="https://github.com/OmarAly92">Omar</vendor>
 
     <description><![CDATA[
     Adds a generator to the <em>New</em> context menu to create the Clean-Architecture folder structure for a given feature.
@@ -16,8 +16,8 @@
 
     <actions>
         <action
-            id="de.tyxar.clean_architecture_plugin.action.CleanGeneratorAction"
-            class="de.tyxar.clean_architecture_plugin.action.ActionGenerateFlutter"
+            id="de.omar.clean_architecture_plugin.action.CleanGeneratorAction"
+            class="de.omar.clean_architecture_plugin.action.ActionGenerateFlutter"
             text="Flutter Clean Generator"
             icon="AllIcons.Actions.NewFolder"
             description="Trigger clean generator">

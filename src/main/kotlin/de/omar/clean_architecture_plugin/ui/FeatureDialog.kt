@@ -3,7 +3,7 @@
  * License: GPL-3
  * Last Edited: 08.12.19, 00:03
  */
-package de.tyxar.clean_architecture_plugin.ui
+package de.omar.clean_architecture_plugin.ui
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper

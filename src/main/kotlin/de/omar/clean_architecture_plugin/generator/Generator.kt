@@ -4,11 +4,11 @@
  * Last Edited: 07.12.19, 23:26
  */
 
-package de.tyxar.clean_architecture_plugin.generator
+package de.omar.clean_architecture_plugin.generator
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import de.tyxar.clean_architecture_plugin.ui.Notifier
+import de.omar.clean_architecture_plugin.ui.Notifier
 import java.io.IOException
 
 /**
