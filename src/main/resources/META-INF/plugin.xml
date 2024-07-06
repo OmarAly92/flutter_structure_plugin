@@ -23,7 +23,7 @@
             description="Trigger clean generator">
             <add-to-group anchor="after"
                 group-id="NewGroup" relative-to-action="NewDir" />
-            <keyboard-shortcut keymap="$default" first-keystroke="ctrl t"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="alt t"/>
         </action>
     </actions>
 

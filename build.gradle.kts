@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.flutter-structures"
-version = "1.0.3-SNAPSHOT"
+version = "1.0.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -31,6 +31,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("212")
+        untilBuild.set("241.*")
     }
 
     signPlugin {
@@ -40,6 +41,6 @@ tasks {
     }
 
     publishPlugin {
-        token.set(System.getenv("PUBLISH_TOKEN"))
+        token.set(System.getenv("perm:T21hckFseTky.OTItMTAzMjA=.7XLDpX0JGTvSYGIDCySGxgIIogWBsM"))
     }
 }
