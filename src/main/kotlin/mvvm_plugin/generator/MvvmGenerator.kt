@@ -4,17 +4,17 @@
  * Last Edited: 07.12.19, 23:26
  */
 
-package de.omar.clean_architecture_plugin.generator
+package mvvm_plugin.generator
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import de.omar.clean_architecture_plugin.ui.CleanArchNotifier
+import mvvm_plugin.ui.MvvmNotifier
 import java.io.IOException
 
 /**
- * CleanArchGenerator Factory to create structure
+ * MvvmGenerator Factory to create structure
  */
-interface CleanArchGenerator {
+interface MvvmGenerator {
     companion object {
         /**
          * Creates a [parent] folder and its [children] in a given [folder].
@@ -30,7 +30,7 @@ interface CleanArchGenerator {
             try {
                 for (child in folder.children) {
                     if (child.name == parent) {
-                        CleanArchNotifier.warning(project, "Directory [$parent] already exists")
+                        MvvmNotifier.warning(project, "Directory [$parent] already exists")
                         return null
                     }
                 }
@@ -42,7 +42,7 @@ interface CleanArchGenerator {
                 }
                 return mapOfFolder
             } catch (e: IOException) {
-                CleanArchNotifier.warning(project, "Couldn't create $parent directory")
+                MvvmNotifier.warning(project, "Couldn't create $parent directory")
                 e.printStackTrace()
                 return null
             }

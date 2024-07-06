@@ -16,14 +16,14 @@
 
     <actions>
         <action
-            id="de.omar.clean_architecture_plugin.action.CleanGeneratorAction"
-            class="de.omar.clean_architecture_plugin.action.CleanArchActionGenerateFlutter"
+            id="clean_arch_plugin.action.CleanArchActionGroup"
+            class="clean_arch_plugin.action.CleanArchActionGenerateFlutter"
             text="Clean Arch Generator"
             icon="AllIcons.Actions.NewFolder"
             description="Trigger clean generator">
             <add-to-group anchor="after"
                 group-id="NewGroup" relative-to-action="NewDir" />
-            <keyboard-shortcut keymap="$default" first-keystroke="alt t"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl t"/>
         </action>
     </actions>
 
@@ -37,8 +37,15 @@
             description="Trigger MVVM generator">
             <add-to-group anchor="after"
                 group-id="NewGroup" relative-to-action="NewDir" />
-<!--            <keyboard-shortcut keymap="$default" first-keystroke="ctrl t"/>-->
+            <!--            <keyboard-shortcut keymap="$default" first-keystroke="ctrl t"/>-->
         </action>
     </actions>
 
 </idea-plugin>
+
+
+
+
+
+
+

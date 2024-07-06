@@ -1,12 +1,12 @@
-package de.omar.clean_architecture_plugin.action
+package mvvm_plugin.action
 
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import de.omar.clean_architecture_plugin.generator.CleanArchGenerator
-import de.omar.clean_architecture_plugin.ui.CleanArchFeatureDialog
+import mvvm_plugin.generator.MvvmGenerator
+import mvvm_plugin.ui.MvvmFeatureDialog
 import java.io.IOException
 
 /**
@@ -14,14 +14,14 @@ import java.io.IOException
  *
  * This class will call the dialog and generate the Flutter Clean-Architecture structure
  */
-class CleanArchActionGenerateFlutter : AnAction() {
+class MvvmActionGenerateFlutter : AnAction() {
 
 
     /**
      * Is called by the context action menu entry with an [actionEvent]
      */
     override fun actionPerformed(actionEvent: AnActionEvent) {
-        val dialog = CleanArchFeatureDialog(actionEvent.project)
+        val dialog = MvvmFeatureDialog(actionEvent.project)
         if (dialog.showAndGet()) {
             generate(actionEvent.dataContext, dialog.getName(), dialog.splitSource())
         }
@@ -38,7 +38,7 @@ class CleanArchActionGenerateFlutter : AnAction() {
         var folder = if (selected.isDirectory) selected else selected.parent
         WriteCommandAction.runWriteCommandAction(project) {
             if (!root.isNullOrBlank()) {
-                val result = CleanArchGenerator.createFolder(
+                val result = MvvmGenerator.createFolder(
                     project, folder, root
                 ) ?: return@runWriteCommandAction
                 folder = result[root]
@@ -48,13 +48,13 @@ class CleanArchActionGenerateFlutter : AnAction() {
              * Generates Data Layer
              */
             if (splitSource != null && splitSource) {
-                val mapOrFalse = CleanArchGenerator.createFolder(
+                val mapOrFalse = MvvmGenerator.createFolder(
                     project, folder,
                     "data",
                     "repository", "model"
                 ) ?: return@runWriteCommandAction
                 mapOrFalse["data"]?.let { data: VirtualFile ->
-                    CleanArchGenerator.createFolder(
+                    MvvmGenerator.createFolder(
                         project, data,
                         "data_source",
                         "remote", "local"
@@ -64,16 +64,22 @@ class CleanArchActionGenerateFlutter : AnAction() {
                     /**
                      * Generates Remote Data Source Dart file
                      */
-                    val remoteDataSourceFolder = mapOrFalse["data"]?.findChild("data_source")?.findChild("remote")
+                    val remoteDataSourceFolder =
+                        mapOrFalse["data"]?.findChild("data_source")?.findChild("remote")
                     if (remoteDataSourceFolder != null && root != null) {
                         val content = getDataSourceFileContent(root, false)
-                        createDartFile(remoteDataSourceFolder, root + "_remote_data_source", content)
+                        createDartFile(
+                            remoteDataSourceFolder,
+                            root + "_remote_data_source",
+                            content
+                        )
                     }
 
                     /**
                      * Generates Local Data Source Dart file
                      */
-                    val localDataSourceFolder = mapOrFalse["data"]?.findChild("data_source")?.findChild("local")
+                    val localDataSourceFolder =
+                        mapOrFalse["data"]?.findChild("data_source")?.findChild("local")
                     if (localDataSourceFolder != null && root != null) {
                         val content = getDataSourceFileContent(root, true)
                         createDartFile(localDataSourceFolder, root + "_local_data_source", content)
@@ -84,12 +90,12 @@ class CleanArchActionGenerateFlutter : AnAction() {
                      */
                     val repositoryFolder = mapOrFalse["data"]?.findChild("repository")
                     if (repositoryFolder != null && root != null) {
-                        val content = getRepositoryFileContent(root, false, project, selected)
+                        val content = getRepositoryFileContent(root,  project, selected)
                         createDartFile(repositoryFolder, root + "_repository", content)
                     }
                 }
             } else {
-                val dataResult = CleanArchGenerator.createFolder(
+                val dataResult = MvvmGenerator.createFolder(
                     project, folder,
                     "data",
                     "repository", "data_source", "model"
@@ -109,43 +115,24 @@ class CleanArchActionGenerateFlutter : AnAction() {
                  */
                 val repositoryFolder = dataResult?.get("data")?.findChild("repository")
                 if (repositoryFolder != null && root != null) {
-                    val content = getRepositoryFileContent(root, false, project, selected)
+                    val content = getRepositoryFileContent(root,  project, selected)
                     createDartFile(repositoryFolder, root + "_repository", content)
                 }
-            }
-
-
-            /**
-             * Generates Domain Layer
-             */
-            val domainResult = CleanArchGenerator.createFolder(
-                project, folder,
-                "domain",
-                "repository", "use_case", "entity"
-            )
-
-
-            /**
-             * Generates Abstract Repository Dart file
-             */
-            val repositoryFolder = domainResult?.get("domain")?.findChild("repository")
-            if (repositoryFolder != null && root != null) {
-                val content = getRepositoryFileContent(root, true, project, selected)
-                createDartFile(repositoryFolder, root + "_repository", content)
             }
 
             /**
              * Generates Presentation Layer
              */
-            val presentationResult = CleanArchGenerator.createFolder(project, folder, "presentation", "example_screen")
+            val presentationResult =
+                MvvmGenerator.createFolder(project, folder, "presentation", "example_screen")
             val presentationFolder = presentationResult?.get("example_screen")
             if (presentationFolder != null) {
-                val uiResult =  CleanArchGenerator.createFolder(project, presentationFolder, "ui")
+                val uiResult = MvvmGenerator.createFolder(project, presentationFolder, "ui")
                 val uiFolder = uiResult?.get("ui")
                 if (uiFolder != null) {
-                    CleanArchGenerator.createFolder(project, uiFolder, "widget")
+                    MvvmGenerator.createFolder(project, uiFolder, "widget")
                 }
-                CleanArchGenerator.createFolder(project, presentationFolder, "logic")
+                MvvmGenerator.createFolder(project, presentationFolder, "logic")
             }
         }
     }
@@ -166,30 +153,23 @@ class CleanArchActionGenerateFlutter : AnAction() {
 
     private fun getRepositoryFileContent(
         root: String,
-        isAbstract: Boolean = false,
         project: Project,
         selected: VirtualFile
     ): String {
         val className = snakeToCamelCase(root) + "Repository"
-        if (isAbstract) {
-            val content = """
-           abstract class $className {}
-          """.trimIndent()
-            return content
-        } else {
-            val content = """
+        val content = """
            import 'package:${project.name}/${selected.name}/$root/domain/repository/${root}_repository.dart';
 
            class ${className + "Imp"} implements $className  {}
           """.trimIndent()
-            return content
-        }
+        return content
     }
+
     private fun getDataSourceFileContent(
         root: String,
         isLocal: Boolean = false,
     ): String {
-        val className = snakeToCamelCase(root) + "${if(isLocal) "Local" else "Remote"}DataSource"
+        val className = snakeToCamelCase(root) + "${if (isLocal) "Local" else "Remote"}DataSource"
         val content = """
            abstract class $className {}
 

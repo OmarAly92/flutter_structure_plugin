@@ -1,9 +1,5 @@
-/*
- * Copyright: Copyright (c) 2019 Arne Rantzen <arne@rantzen.net>
- * License: GPL-3
- * Last Edited: 08.12.19, 00:03
- */
-package de.omar.clean_architecture_plugin.ui
+
+package mvvm_plugin.ui
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
@@ -15,7 +11,7 @@ import javax.swing.JTextField
 /**
  * Creates a [DialogWrapper] to get the feature name
  */
-class CleanArchFeatureDialog(project: Project?) :
+class MvvmFeatureDialog(project: Project?) :
     DialogWrapper(project) {
     private var contentPanel: JPanel? = null
     private var nameTextField: JTextField? = null
@@ -44,6 +40,6 @@ class CleanArchFeatureDialog(project: Project?) :
 
     init {
         init()
-        title = "Flutter Clean-Arch CleanArchGenerator"
+        title = "Flutter Clean-Arch MvvmGenerator"
     }
 }

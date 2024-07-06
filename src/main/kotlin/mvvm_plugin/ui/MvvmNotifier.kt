@@ -4,7 +4,7 @@
  * Last Edited: 07.12.19, 22:29
  */
 
-package de.omar.clean_architecture_plugin.ui
+package mvvm_plugin.ui
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
@@ -14,7 +14,7 @@ import com.intellij.openapi.project.Project
 /**
  * Notification factory
  */
-interface CleanArchNotifier {
+interface MvvmNotifier {
     companion object {
         /**
          * Creates a warning notification in the [project] context with the [content]
@@ -23,7 +23,7 @@ interface CleanArchNotifier {
             Notifications.Bus.notify(
                 Notification(
                     "CleanArchitectureGenerator",
-                    "Clean-Architecture clean arch Generator Warning",
+                    "Clean-Architecture MvvmGenerator Warning",
                     content,
                     NotificationType.WARNING
                 ), project
@@ -36,7 +36,7 @@ interface CleanArchNotifier {
             Notifications.Bus.notify(
                 Notification(
                     "CleanArchitectureGenerator",
-                    "Clean-Architecture clean arch Generator Error",
+                    "Clean-Architecture MvvmGenerator Error",
                     content,
                     NotificationType.ERROR
                 ), project

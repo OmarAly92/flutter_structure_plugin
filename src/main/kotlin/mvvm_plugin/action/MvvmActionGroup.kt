@@ -4,7 +4,7 @@
  * Last Edited: 07.12.19, 22:13
  */
 
-package de.omar.clean_architecture_plugin.action
+package mvvm_plugin.action
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -13,9 +13,9 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 
 
 /**
- * Defines the CleanArchActionGroup to be only visible when parent is a [PSI_ELEMENT]
+ * Defines the MvvmActionGroup to be only visible when parent is a [PSI_ELEMENT]
  */
-class CleanArchActionGroup : DefaultActionGroup() {
+class MvvmActionGroup : DefaultActionGroup() {
     override fun update(event: AnActionEvent) {
         // Enable/disable depending on whether user is editing
         val psi = event.getData(CommonDataKeys.PSI_ELEMENT)
