@@ -13,9 +13,9 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 
 
 /**
- * Defines the ActionGroup to be only visible when parent is a [PSI_ELEMENT]
+ * Defines the CleanArchActionGroup to be only visible when parent is a [PSI_ELEMENT]
  */
-class ActionGroup : DefaultActionGroup() {
+class CleanArchActionGroup : DefaultActionGroup() {
     override fun update(event: AnActionEvent) {
         // Enable/disable depending on whether user is editing
         val psi = event.getData(CommonDataKeys.PSI_ELEMENT)

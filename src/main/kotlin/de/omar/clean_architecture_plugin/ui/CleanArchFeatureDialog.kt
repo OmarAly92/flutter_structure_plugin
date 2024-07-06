@@ -15,7 +15,7 @@ import javax.swing.JTextField
 /**
  * Creates a [DialogWrapper] to get the feature name
  */
-class FeatureDialog(project: Project?) :
+class CleanArchFeatureDialog(project: Project?) :
     DialogWrapper(project) {
     private var contentPanel: JPanel? = null
     private var nameTextField: JTextField? = null
@@ -44,6 +44,6 @@ class FeatureDialog(project: Project?) :
 
     init {
         init()
-        title = "Flutter Clean-Arch Generator"
+        title = "Flutter Clean-Arch CleanArchGenerator"
     }
 }

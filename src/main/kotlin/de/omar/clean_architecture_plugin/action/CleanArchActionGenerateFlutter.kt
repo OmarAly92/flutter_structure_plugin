@@ -5,8 +5,8 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import de.omar.clean_architecture_plugin.generator.Generator
-import de.omar.clean_architecture_plugin.ui.FeatureDialog
+import de.omar.clean_architecture_plugin.generator.CleanArchGenerator
+import de.omar.clean_architecture_plugin.ui.CleanArchFeatureDialog
 import java.io.IOException
 
 /**
@@ -14,14 +14,14 @@ import java.io.IOException
  *
  * This class will call the dialog and generate the Flutter Clean-Architecture structure
  */
-class ActionGenerateFlutter : AnAction() {
+class CleanArchActionGenerateFlutter : AnAction() {
 
 
     /**
      * Is called by the context action menu entry with an [actionEvent]
      */
     override fun actionPerformed(actionEvent: AnActionEvent) {
-        val dialog = FeatureDialog(actionEvent.project)
+        val dialog = CleanArchFeatureDialog(actionEvent.project)
         if (dialog.showAndGet()) {
             generate(actionEvent.dataContext, dialog.getName(), dialog.splitSource())
         }
@@ -38,7 +38,7 @@ class ActionGenerateFlutter : AnAction() {
         var folder = if (selected.isDirectory) selected else selected.parent
         WriteCommandAction.runWriteCommandAction(project) {
             if (!root.isNullOrBlank()) {
-                val result = Generator.createFolder(
+                val result = CleanArchGenerator.createFolder(
                     project, folder, root
                 ) ?: return@runWriteCommandAction
                 folder = result[root]
@@ -48,13 +48,13 @@ class ActionGenerateFlutter : AnAction() {
              * Generates Data Layer
              */
             if (splitSource != null && splitSource) {
-                val mapOrFalse = Generator.createFolder(
+                val mapOrFalse = CleanArchGenerator.createFolder(
                     project, folder,
                     "data",
                     "repository", "model"
                 ) ?: return@runWriteCommandAction
                 mapOrFalse["data"]?.let { data: VirtualFile ->
-                    Generator.createFolder(
+                    CleanArchGenerator.createFolder(
                         project, data,
                         "data_source",
                         "remote", "local"
@@ -89,7 +89,7 @@ class ActionGenerateFlutter : AnAction() {
                     }
                 }
             } else {
-                val dataResult = Generator.createFolder(
+                val dataResult = CleanArchGenerator.createFolder(
                     project, folder,
                     "data",
                     "repository", "data_source", "model"
@@ -118,7 +118,7 @@ class ActionGenerateFlutter : AnAction() {
             /**
              * Generates Domain Layer
              */
-            val domainResult = Generator.createFolder(
+            val domainResult = CleanArchGenerator.createFolder(
                 project, folder,
                 "domain",
                 "repository", "use_case", "entity"
@@ -137,15 +137,15 @@ class ActionGenerateFlutter : AnAction() {
             /**
              * Generates Presentation Layer
              */
-            val presentationResult = Generator.createFolder(project, folder, "presentation", "example_screen")
+            val presentationResult = CleanArchGenerator.createFolder(project, folder, "presentation", "example_screen")
             val presentationFolder = presentationResult?.get("example_screen")
             if (presentationFolder != null) {
-                val uiResult =  Generator.createFolder(project, presentationFolder, "ui")
+                val uiResult =  CleanArchGenerator.createFolder(project, presentationFolder, "ui")
                 val uiFolder = uiResult?.get("ui")
                 if (uiFolder != null) {
-                    Generator.createFolder(project, uiFolder, "widget")
+                    CleanArchGenerator.createFolder(project, uiFolder, "widget")
                 }
-                Generator.createFolder(project, presentationFolder, "logic")
+                CleanArchGenerator.createFolder(project, presentationFolder, "logic")
             }
         }
     }
@@ -213,6 +213,6 @@ class ActionGenerateFlutter : AnAction() {
 
 
     private fun snakeToCamelCase(snake: String): String {
-        return snake.split('_').joinToString("") { it.capitalize() }
+        return snake.split('_').joinToString("") { it.replaceFirstChar { char -> char.uppercase() } }
     }
 }

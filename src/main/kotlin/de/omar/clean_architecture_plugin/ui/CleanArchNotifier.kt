@@ -14,7 +14,7 @@ import com.intellij.openapi.project.Project
 /**
  * Notification factory
  */
-interface Notifier {
+interface CleanArchNotifier {
     companion object {
         /**
          * Creates a warning notification in the [project] context with the [content]
@@ -23,7 +23,7 @@ interface Notifier {
             Notifications.Bus.notify(
                 Notification(
                     "CleanArchitectureGenerator",
-                    "Clean-Architecture Generator Warning",
+                    "Clean-Architecture clean arch Generator Warning",
                     content,
                     NotificationType.WARNING
                 ), project
@@ -36,7 +36,7 @@ interface Notifier {
             Notifications.Bus.notify(
                 Notification(
                     "CleanArchitectureGenerator",
-                    "Clean-Architecture Generator Error",
+                    "Clean-Architecture clean arch Generator Error",
                     content,
                     NotificationType.ERROR
                 ), project

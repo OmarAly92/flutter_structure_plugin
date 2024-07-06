@@ -8,13 +8,13 @@ package de.omar.clean_architecture_plugin.generator
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import de.omar.clean_architecture_plugin.ui.Notifier
+import de.omar.clean_architecture_plugin.ui.CleanArchNotifier
 import java.io.IOException
 
 /**
- * Generator Factory to create structure
+ * CleanArchGenerator Factory to create structure
  */
-interface Generator {
+interface CleanArchGenerator {
     companion object {
         /**
          * Creates a [parent] folder and its [children] in a given [folder].
@@ -30,7 +30,7 @@ interface Generator {
             try {
                 for (child in folder.children) {
                     if (child.name == parent) {
-                        Notifier.warning(project, "Directory [$parent] already exists")
+                        CleanArchNotifier.warning(project, "Directory [$parent] already exists")
                         return null
                     }
                 }
@@ -42,7 +42,7 @@ interface Generator {
                 }
                 return mapOfFolder
             } catch (e: IOException) {
-                Notifier.warning(project, "Couldn't create $parent directory")
+                CleanArchNotifier.warning(project, "Couldn't create $parent directory")
                 e.printStackTrace()
                 return null
             }
