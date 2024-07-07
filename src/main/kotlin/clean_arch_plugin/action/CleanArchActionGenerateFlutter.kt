@@ -90,7 +90,7 @@ class CleanArchActionGenerateFlutter : AnAction() {
                      */
                     val repositoryFolder = mapOrFalse["data"]?.findChild("repository")
                     if (repositoryFolder != null && root != null) {
-                        val content = getRepositoryFileContent(root,  project, selected)
+                        val content = getRepositoryFileContent(root, false, project, selected)
                         createDartFile(repositoryFolder, root + "_repository", content)
                     }
                 }
@@ -115,9 +115,29 @@ class CleanArchActionGenerateFlutter : AnAction() {
                  */
                 val repositoryFolder = dataResult?.get("data")?.findChild("repository")
                 if (repositoryFolder != null && root != null) {
-                    val content = getRepositoryFileContent(root,  project, selected)
+                    val content = getRepositoryFileContent(root, true, project, selected)
                     createDartFile(repositoryFolder, root + "_repository", content)
                 }
+            }
+
+
+            /**
+             * Generates Domain Layer
+             */
+            val domainResult = CleanArchGenerator.createFolder(
+                project, folder,
+                "domain",
+                "repository", "use_case", "entity"
+            )
+
+
+            /**
+             * Generates Abstract Repository Dart file
+             */
+            val repositoryFolder = domainResult?.get("domain")?.findChild("repository")
+            if (repositoryFolder != null && root != null) {
+                val content = getRepositoryFileContent(root, true, project, selected)
+                createDartFile(repositoryFolder, root + "_repository", content)
             }
 
             /**
@@ -153,16 +173,24 @@ class CleanArchActionGenerateFlutter : AnAction() {
 
     private fun getRepositoryFileContent(
         root: String,
+        isAbstract: Boolean = false,
         project: Project,
         selected: VirtualFile
     ): String {
         val className = snakeToCamelCase(root) + "Repository"
-        val content = """
+        if (isAbstract) {
+            val content = """
+           abstract class $className {}
+          """.trimIndent()
+            return content
+        } else {
+            val content = """
            import 'package:${project.name}/${selected.name}/$root/domain/repository/${root}_repository.dart';
 
            class ${className + "Imp"} implements $className  {}
           """.trimIndent()
-        return content
+            return content
+        }
     }
 
     private fun getDataSourceFileContent(
@@ -193,6 +221,7 @@ class CleanArchActionGenerateFlutter : AnAction() {
 
 
     private fun snakeToCamelCase(snake: String): String {
-        return snake.split('_').joinToString("") { it.replaceFirstChar { char -> char.uppercase() } }
+        return snake.split('_')
+            .joinToString("") { it.replaceFirstChar { char -> char.uppercase() } }
     }
 }
