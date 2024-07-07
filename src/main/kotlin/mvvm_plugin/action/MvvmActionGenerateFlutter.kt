@@ -2,7 +2,6 @@ package mvvm_plugin.action
 
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import mvvm_plugin.generator.MvvmGenerator
@@ -90,7 +89,7 @@ class MvvmActionGenerateFlutter : AnAction() {
                      */
                     val repositoryFolder = mapOrFalse["data"]?.findChild("repository")
                     if (repositoryFolder != null && root != null) {
-                        val content = getRepositoryFileContent(root,  project, selected)
+                        val content = getRepositoryFileContent(root)
                         createDartFile(repositoryFolder, root + "_repository", content)
                     }
                 }
@@ -115,7 +114,7 @@ class MvvmActionGenerateFlutter : AnAction() {
                  */
                 val repositoryFolder = dataResult?.get("data")?.findChild("repository")
                 if (repositoryFolder != null && root != null) {
-                    val content = getRepositoryFileContent(root,  project, selected)
+                    val content = getRepositoryFileContent(root)
                     createDartFile(repositoryFolder, root + "_repository", content)
                 }
             }
@@ -153,14 +152,10 @@ class MvvmActionGenerateFlutter : AnAction() {
 
     private fun getRepositoryFileContent(
         root: String,
-        project: Project,
-        selected: VirtualFile
     ): String {
         val className = snakeToCamelCase(root) + "Repository"
         val content = """
-           import 'package:${project.name}/${selected.name}/$root/domain/repository/${root}_repository.dart';
-
-           class ${className + "Imp"} implements $className  {}
+           class $className {}
           """.trimIndent()
         return content
     }
