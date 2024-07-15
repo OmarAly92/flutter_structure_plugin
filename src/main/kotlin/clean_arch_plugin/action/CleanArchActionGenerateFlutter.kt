@@ -115,7 +115,7 @@ class CleanArchActionGenerateFlutter : AnAction() {
                  */
                 val repositoryFolder = dataResult?.get("data")?.findChild("repository")
                 if (repositoryFolder != null && root != null) {
-                    val content = getRepositoryFileContent(root, true, project, selected)
+                    val content = getRepositoryFileContent(root, false, project, selected)
                     createDartFile(repositoryFolder, root + "_repository", content)
                 }
             }
