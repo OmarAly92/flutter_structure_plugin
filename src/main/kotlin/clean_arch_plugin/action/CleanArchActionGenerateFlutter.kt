@@ -91,7 +91,7 @@ class CleanArchActionGenerateFlutter : AnAction() {
                     val repositoryFolder = mapOrFalse["data"]?.findChild("repository")
                     if (repositoryFolder != null && root != null) {
                         val content = getRepositoryFileContent(root, false, project, selected)
-                        createDartFile(repositoryFolder, root + "_repository", content)
+                        createDartFile(repositoryFolder, root + "_repository_imp", content)
                     }
                 }
             } else {
@@ -116,7 +116,7 @@ class CleanArchActionGenerateFlutter : AnAction() {
                 val repositoryFolder = dataResult?.get("data")?.findChild("repository")
                 if (repositoryFolder != null && root != null) {
                     val content = getRepositoryFileContent(root, false, project, selected)
-                    createDartFile(repositoryFolder, root + "_repository", content)
+                    createDartFile(repositoryFolder, root + "_repository_imp", content)
                 }
             }
 
