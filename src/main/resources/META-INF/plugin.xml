@@ -43,13 +43,13 @@
 
 
 
-    <extensions defaultExtensionNs="com.intellij">
-        <applicationConfigurable
-            parentId="tools"
-            instance="plugin_settings.PluginSettingsConfigurable"
-            id="com.example.ApplicationSettingsConfigurable"
-            displayName="Flutter Structure Plugin"/>
-    </extensions>
+<!--    <extensions defaultExtensionNs="com.intellij">-->
+<!--        <applicationConfigurable-->
+<!--            parentId="tools"-->
+<!--            instance="plugin_settings.PluginSettingsConfigurable"-->
+<!--            id="com.example.ApplicationSettingsConfigurable"-->
+<!--            displayName="Flutter Structure Plugin"/>-->
+<!--    </extensions>-->
 
 </idea-plugin>
 
