@@ -129,7 +129,7 @@ class MvvmActionGenerateFlutter : AnAction() {
                 val uiResult = MvvmGenerator.createFolder(project, presentationFolder, "ui")
                 val uiFolder = uiResult?.get("ui")
                 if (uiFolder != null) {
-                    MvvmGenerator.createFolder(project, uiFolder, "widget")
+                    MvvmGenerator.createFolder(project, uiFolder, "widgets")
                 }
                 MvvmGenerator.createFolder(project, presentationFolder, "logic")
             }

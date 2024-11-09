@@ -150,7 +150,7 @@ class CleanArchActionGenerateFlutter : AnAction() {
                 val uiResult = CleanArchGenerator.createFolder(project, presentationFolder, "ui")
                 val uiFolder = uiResult?.get("ui")
                 if (uiFolder != null) {
-                    CleanArchGenerator.createFolder(project, uiFolder, "widget")
+                    CleanArchGenerator.createFolder(project, uiFolder, "widgets")
                 }
                 CleanArchGenerator.createFolder(project, presentationFolder, "logic")
             }
