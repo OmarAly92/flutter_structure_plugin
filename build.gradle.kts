@@ -11,6 +11,8 @@ repositories {
     mavenCentral()
 }
 
+apply(plugin = "org.jetbrains.intellij")
+
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
@@ -31,7 +33,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("212")
-//        untilBuild.set("241.*")
+        untilBuild.set("")
     }
 
     signPlugin {
