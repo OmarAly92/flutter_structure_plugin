@@ -1,13 +1,17 @@
 package clean_arch_plugin.action
 
-import com.intellij.openapi.actionSystem.*
+import clean_arch_plugin.ui.CleanArchFeatureDialog
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VirtualFile
-import clean_arch_plugin.generator.CleanArchGenerator
-import clean_arch_plugin.ui.CleanArchFeatureDialog
-import java.io.IOException
+import utils.AppGenerator
+import utils.ScreenGenMethods
 
 /**
  * Flutter action in the context menu
@@ -34,11 +38,15 @@ class CleanArchActionGenerateFlutter : AnAction() {
     private fun generate(dataContext: DataContext, fileRoot: String?, splitSource: Boolean?) {
         val project = CommonDataKeys.PROJECT.getData(dataContext) ?: return
         val selected = PlatformDataKeys.VIRTUAL_FILE.getData(dataContext) ?: return
-        val root = fileRoot?.let { convertToSnakeCase(it) }
+        val root = fileRoot?.let { AppGenerator.convertToSnakeCase(it) }
         var folder = if (selected.isDirectory) selected else selected.parent
+        val projectRoot =
+            ProjectRootManager.getInstance(project).contentRoots.firstOrNull() // Or use selected.findChild("..") if needed
+        val flutterPackageName =
+            projectRoot?.let { AppGenerator.getFlutterPackageName(it) } ?: "your_default_package"
         WriteCommandAction.runWriteCommandAction(project) {
             if (!root.isNullOrBlank()) {
-                val result = CleanArchGenerator.createFolder(
+                val result = AppGenerator.createFolder(
                     project, folder, root
                 ) ?: return@runWriteCommandAction
                 folder = result[root]
@@ -48,13 +56,13 @@ class CleanArchActionGenerateFlutter : AnAction() {
              * Generates Data Layer
              */
             if (splitSource != null && splitSource) {
-                val mapOrFalse = CleanArchGenerator.createFolder(
+                val mapOrFalse = AppGenerator.createFolder(
                     project, folder,
                     "data",
                     "repository", "model"
                 ) ?: return@runWriteCommandAction
                 mapOrFalse["data"]?.let { data: VirtualFile ->
-                    CleanArchGenerator.createFolder(
+                    AppGenerator.createFolder(
                         project, data,
                         "data_source",
                         "remote", "local"
@@ -68,7 +76,7 @@ class CleanArchActionGenerateFlutter : AnAction() {
                         mapOrFalse["data"]?.findChild("data_source")?.findChild("remote")
                     if (remoteDataSourceFolder != null && root != null) {
                         val content = getDataSourceFileContent(root, false)
-                        createDartFile(
+                        AppGenerator.createDartFile(
                             remoteDataSourceFolder,
                             root + "_remote_data_source",
                             content
@@ -82,7 +90,11 @@ class CleanArchActionGenerateFlutter : AnAction() {
                         mapOrFalse["data"]?.findChild("data_source")?.findChild("local")
                     if (localDataSourceFolder != null && root != null) {
                         val content = getDataSourceFileContent(root, true)
-                        createDartFile(localDataSourceFolder, root + "_local_data_source", content)
+                        AppGenerator.createDartFile(
+                            localDataSourceFolder,
+                            root + "_local_data_source",
+                            content
+                        )
                     }
 
                     /**
@@ -90,12 +102,16 @@ class CleanArchActionGenerateFlutter : AnAction() {
                      */
                     val repositoryFolder = mapOrFalse["data"]?.findChild("repository")
                     if (repositoryFolder != null && root != null) {
-                        val content = getRepositoryFileContent(root, false, project, selected)
-                        createDartFile(repositoryFolder, root + "_repository_imp", content)
+                        val content = getRepositoryFileContent(root, false, flutterPackageName)
+                        AppGenerator.createDartFile(
+                            repositoryFolder,
+                            root + "_repository_imp",
+                            content
+                        )
                     }
                 }
             } else {
-                val dataResult = CleanArchGenerator.createFolder(
+                val dataResult = AppGenerator.createFolder(
                     project, folder,
                     "data",
                     "repository", "data_source", "model"
@@ -107,7 +123,11 @@ class CleanArchActionGenerateFlutter : AnAction() {
                 val dataSourceFolder = dataResult?.get("data")?.findChild("data_source")
                 if (dataSourceFolder != null && root != null) {
                     val content = getDataSourceFileContent(root, false)
-                    createDartFile(dataSourceFolder, root + "_remote_data_source", content)
+                    AppGenerator.createDartFile(
+                        dataSourceFolder,
+                        root + "_remote_data_source",
+                        content
+                    )
                 }
 
                 /**
@@ -115,8 +135,8 @@ class CleanArchActionGenerateFlutter : AnAction() {
                  */
                 val repositoryFolder = dataResult?.get("data")?.findChild("repository")
                 if (repositoryFolder != null && root != null) {
-                    val content = getRepositoryFileContent(root, false, project, selected)
-                    createDartFile(repositoryFolder, root + "_repository_imp", content)
+                    val content = getRepositoryFileContent(root, false, flutterPackageName)
+                    AppGenerator.createDartFile(repositoryFolder, root + "_repository_imp", content)
                 }
             }
 
@@ -124,7 +144,7 @@ class CleanArchActionGenerateFlutter : AnAction() {
             /**
              * Generates Domain Layer
              */
-            val domainResult = CleanArchGenerator.createFolder(
+            val domainResult = AppGenerator.createFolder(
                 project, folder,
                 "domain",
                 "repository", "use_case", "entity"
@@ -136,48 +156,69 @@ class CleanArchActionGenerateFlutter : AnAction() {
              */
             val repositoryFolder = domainResult?.get("domain")?.findChild("repository")
             if (repositoryFolder != null && root != null) {
-                val content = getRepositoryFileContent(root, true, project, selected)
-                createDartFile(repositoryFolder, root + "_repository", content)
+                val content = getRepositoryFileContent(root, true, flutterPackageName)
+                AppGenerator.createDartFile(repositoryFolder, root + "_repository", content)
             }
 
             /**
              * Generates Presentation Layer
              */
             val presentationResult =
-                CleanArchGenerator.createFolder(project, folder, "presentation", "example_screen")
-            val presentationFolder = presentationResult?.get("example_screen")
+                AppGenerator.createFolder(project, folder, "presentation", "${root}_screen")
+            val presentationFolder = presentationResult?.get("${root}_screen")
             if (presentationFolder != null) {
-                val uiResult = CleanArchGenerator.createFolder(project, presentationFolder, "ui")
+                val uiResult = AppGenerator.createFolder(project, presentationFolder, "ui")
                 val uiFolder = uiResult?.get("ui")
                 if (uiFolder != null) {
-                    CleanArchGenerator.createFolder(project, uiFolder, "widgets")
-                }
-                CleanArchGenerator.createFolder(project, presentationFolder, "logic")
-            }
-        }
-    }
+                    root?.let { ScreenGenMethods.getScreenFileContent(it, flutterPackageName,false) }
+                        ?.let {
+                            AppGenerator.createDartFile(
+                                uiFolder,
+                                "${root}_screen",
+                                it
+                            )
+                        }
+                    val widgetsResult = AppGenerator.createFolder(project, uiFolder, "widgets")
+                    val widgetsFolder = widgetsResult?.get("widgets")
+                    if (widgetsFolder != null) {
+                        root?.let { ScreenGenMethods.getBodyWidgetFileContent(it) }?.let {
+                            AppGenerator.createDartFile(
+                                widgetsFolder,
+                                "${root}_body",
+                                it
+                            )
+                        }
+                    }
 
-    private fun createDartFile(
-        directory: VirtualFile,
-        fileName: String,
-        content: String
-    ) {
-        val dartFileName = "$fileName.dart"
-        val dartFile = directory.findOrCreateChildData(this, dartFileName)
-        try {
-            VfsUtil.saveText(dartFile, content)
-        } catch (e: IOException) {
-            e.printStackTrace()
+                }
+                val logicResult = AppGenerator.createFolder(project, presentationFolder, "logic")
+                val logicFolder = logicResult?.get("logic")
+                if (logicFolder != null) {
+                    root?.let { ScreenGenMethods.getCubitFileContent(it) }?.let {
+                        AppGenerator.createDartFile(
+                            logicFolder,
+                            "${root}_cubit",
+                            it
+                        )
+                    }
+                    root?.let { ScreenGenMethods.getStateFileContent(it) }?.let {
+                        AppGenerator.createDartFile(
+                            logicFolder,
+                            "${root}_state",
+                            it
+                        )
+                    }
+                }
+            }
         }
     }
 
     private fun getRepositoryFileContent(
         root: String,
         isAbstract: Boolean = false,
-        project: Project,
-        selected: VirtualFile
+        flutterPackageName: String,
     ): String {
-        val className = snakeToCamelCase(root) + "Repository"
+        val className = AppGenerator.snakeToCamelCase(root) + "Repository"
         if (isAbstract) {
             val content = """
            abstract class $className {}
@@ -185,9 +226,15 @@ class CleanArchActionGenerateFlutter : AnAction() {
             return content
         } else {
             val content = """
-           import 'package:${project.name}/${selected.name}/$root/domain/repository/${root}_repository.dart';
+           import 'package:$flutterPackageName/$root/domain/repository/${root}_repository.dart';
+           import 'package:$flutterPackageName/$root/data/data_source/${root}_remote_data_source.dart';
 
-           class ${className + "Imp"} implements $className  {}
+
+           class ${className + "Imp"} implements $className  {
+            ${className + "Imp"}(this._remoteDataSource);
+           
+            final ${AppGenerator.snakeToCamelCase(root)}RemoteDataSource _remoteDataSource;
+          }
           """.trimIndent()
             return content
         }
@@ -197,31 +244,13 @@ class CleanArchActionGenerateFlutter : AnAction() {
         root: String,
         isLocal: Boolean = false,
     ): String {
-        val className = snakeToCamelCase(root) + "${if (isLocal) "Local" else "Remote"}DataSource"
+        val className =
+            AppGenerator.snakeToCamelCase(root) + "${if (isLocal) "Local" else "Remote"}DataSource"
         val content = """
            abstract class $className {}
 
            class ${className + "Imp"} implements $className  {}
           """.trimIndent()
         return content
-    }
-
-    private fun convertToSnakeCase(input: String): String {
-        return input.fold(StringBuilder()) { acc, c ->
-            when {
-                c.isUpperCase() -> {
-                    if (acc.isNotEmpty()) acc.append('_')
-                    acc.append(c.lowercaseChar())
-                }
-
-                else -> acc.append(c)
-            }
-        }.toString()
-    }
-
-
-    private fun snakeToCamelCase(snake: String): String {
-        return snake.split('_')
-            .joinToString("") { it.replaceFirstChar { char -> char.uppercase() } }
     }
 }

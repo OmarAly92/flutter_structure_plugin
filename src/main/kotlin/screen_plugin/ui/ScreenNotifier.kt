@@ -4,7 +4,7 @@
  * Last Edited: 07.12.19, 22:29
  */
 
-package mvvm_plugin.ui
+package screen_plugin.ui
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
@@ -14,7 +14,7 @@ import com.intellij.openapi.project.Project
 /**
  * Notification factory
  */
-interface MvvmNotifier {
+interface ScreenNotifier {
     companion object {
         /**
          * Creates a warning notification in the [project] context with the [content]
@@ -22,7 +22,7 @@ interface MvvmNotifier {
         fun warning(project: Project?, content: String) =
             Notifications.Bus.notify(
                 Notification(
-                    "AppGenerator",
+                    "CleanArchitectureGenerator",
                     "Clean-Architecture MvvmGenerator Warning",
                     content,
                     NotificationType.WARNING
@@ -35,7 +35,7 @@ interface MvvmNotifier {
         fun error(project: Project?, content: String) =
             Notifications.Bus.notify(
                 Notification(
-                    "AppGenerator",
+                    "CleanArchitectureGenerator",
                     "Clean-Architecture MvvmGenerator Error",
                     content,
                     NotificationType.ERROR

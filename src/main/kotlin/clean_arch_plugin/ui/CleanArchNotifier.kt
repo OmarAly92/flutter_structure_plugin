@@ -5,6 +5,7 @@
  */
 
 package clean_arch_plugin.ui
+import utils.AppGenerator
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
@@ -22,7 +23,7 @@ interface CleanArchNotifier {
         fun warning(project: Project?, content: String) =
             Notifications.Bus.notify(
                 Notification(
-                    "CleanArchitectureGenerator",
+                    "AppGenerator",
                     "Clean-Architecture CleanArchGenerator Warning",
                     content,
                     NotificationType.WARNING
@@ -35,7 +36,7 @@ interface CleanArchNotifier {
         fun error(project: Project?, content: String) =
             Notifications.Bus.notify(
                 Notification(
-                    "CleanArchitectureGenerator",
+                    "AppGenerator",
                     "Clean-Architecture CleanArchGenerator Error",
                     content,
                     NotificationType.ERROR

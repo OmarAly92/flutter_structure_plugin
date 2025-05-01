@@ -27,7 +27,6 @@
         </action>
     </actions>
 
-
     <actions>
         <action
             id="mvvm_plugin.action.MvvmActionGroup"
@@ -38,6 +37,19 @@
             <add-to-group anchor="after"
                 group-id="NewGroup" relative-to-action="NewDir" />
             <!--            <keyboard-shortcut keymap="$default" first-keystroke="ctrl t"/>-->
+        </action>
+    </actions>
+
+    <actions>
+        <action
+            id="screen_plugin.action.ScreenActionGroup"
+            class="screen_plugin.action.ScreenActionGenerateFlutter"
+            text="Screen Generator"
+            icon="AllIcons.Actions.NewFolder"
+            description="Trigger Screen generator">
+            <add-to-group anchor="after"
+                group-id="NewGroup" relative-to-action="NewDir" />
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl f"/>
         </action>
     </actions>
 

@@ -1,5 +1,5 @@
 
-package mvvm_plugin.ui
+package screen_plugin.ui
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
@@ -11,7 +11,7 @@ import javax.swing.JTextField
 /**
  * Creates a [DialogWrapper] to get the feature name
  */
-class MvvmFeatureDialog(project: Project?) :
+class ScreenDialog(project: Project?) :
     DialogWrapper(project) {
     private var contentPanel: JPanel? = null
     private var nameTextField: JTextField? = null
