@@ -1,0 +1,56 @@
+<idea-plugin>
+    <id>flutter-full-structure-generator</id>
+    <name>Flutter Full Structure Generator</name>
+    <vendor email="abdallhesam100@gmail.com" url="https://github.com/AbdalluhEssam">Abdalluh Essam</vendor>
+    <icon path="META-INF/pluginIcon.svg"/>
+    <description><![CDATA[
+        <b>Flutter Full Structure Generator</b><br/><br/>
+        Effortlessly scaffold <b>Clean Architecture</b> in your Flutter apps.<br/><br/>
+        ✅ Generate full project structure or feature modules<br/>
+        ✅ Prepares Domain, Data, and Presentation layers<br/>
+        ✅ Designed for Android Studio & VS Code<br/><br/>
+        <b>📁 Generated Structure (Full Project)</b><br/>
+        <pre>
+lib/
+├── core/
+│   ├── constants
+│   ├── network
+│   ├── errors
+│   ├── utils
+│   ├── services
+│   ├── routing
+│   ├── theme
+│   ├── cubit
+│   └── extensions
+├── features/
+│   ├── splash
+│   ├── onboarding
+├── app.dart
+├── main.dart
+└── app_bloc_observer.dart
+        </pre>
+        Built with ❤️ by <b>Abdalluh Essam 🇪🇬</b><br/>
+        📩 <a href="mailto:abdallhesam100@gmail.com">abdallhesam100@gmail.com</a><br/>
+    ]]></description>
+    <version>1.0.1</version>
+    <idea-version since-build="243.0" until-build="999.*"/>
+    <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.plugins.terminal</depends>
+    <actions>
+        <action
+                id="FlutterStructureAction"
+                class="com.abdalluh.flutterstructure.GenerateStructureAction"
+                text="Generate Flutter Structure"
+                description="Run Dart script to scaffold Flutter clean architecture structure.">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+            <add-to-group group-id="NewGroup" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt G"/>
+        </action>
+    </actions>
+    <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="Flutter Structure Generator Group"
+                           displayType="BALLOON"
+                           isLogByDefault="true"/>
+    </extensions>
+</idea-plugin>

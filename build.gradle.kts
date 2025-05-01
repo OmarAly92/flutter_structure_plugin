@@ -7,6 +7,11 @@ plugins {
 group = "com.flutter-structures"
 version = "1.0.2-SNAPSHOT"
 
+
+kotlin {
+    jvmToolchain(17)
+}
+
 repositories {
     mavenCentral()
 }
@@ -18,7 +23,7 @@ apply(plugin = "org.jetbrains.intellij")
 intellij {
     version.set("2023.1.5")
     type.set("IC") // Target IDE Platform
-    plugins.set(listOf(/* Plugin Dependencies */))
+    plugins.set(listOf("terminal"))
 }
 
 tasks {
