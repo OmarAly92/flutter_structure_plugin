@@ -13,7 +13,7 @@
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
     <depends>com.intellij.modules.platform</depends>
-
+    <depends>org.jetbrains.plugins.terminal</depends>
     <actions>
         <action
             id="clean_arch_plugin.action.CleanArchActionGroup"
@@ -23,7 +23,7 @@
             description="Trigger clean generator">
             <add-to-group anchor="after"
                 group-id="NewGroup" relative-to-action="NewDir" />
-            <keyboard-shortcut keymap="$default" first-keystroke="ctrl t"/>
+<!--            <keyboard-shortcut keymap="$default" first-keystroke="ctrl t"/>-->
         </action>
     </actions>
 
@@ -36,7 +36,7 @@
             description="Trigger MVVM generator">
             <add-to-group anchor="after"
                 group-id="NewGroup" relative-to-action="NewDir" />
-            <!--            <keyboard-shortcut keymap="$default" first-keystroke="ctrl t"/>-->
+               <keyboard-shortcut keymap="$default" first-keystroke="ctrl g"/>
         </action>
     </actions>
 
@@ -52,6 +52,18 @@
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl f"/>
         </action>
     </actions>
+    <actions>
+        <action
+            id="core_plugin.action.CoreActionGenerateFlutter"
+            class="core_plugin.action.CoreActionGenerateFlutter"
+            text="Core Generator"
+            icon="AllIcons.Actions.NewFolder"
+            description="Trigger Screen generator">
+            <add-to-group anchor="after"
+                group-id="NewGroup" relative-to-action="NewDir" />
+<!--            <keyboard-shortcut keymap="$default" first-keystroke="ctrl g"/>-->
+        </action>
+    </actions>
 
 
 
@@ -63,8 +75,14 @@
 <!--            displayName="Flutter Structure Plugin"/>-->
 <!--    </extensions>-->
 
+
+    <extensions defaultExtensionNs="com.intellij">
+        <postStartupActivity implementation="utils.FirstRunCommandRunner"/>
+    </extensions>
 </idea-plugin>
 
+
+<!--    mason add core \\n  &#45;&#45;git-url https://github.com/OmarAly92/my_structure.git \\n  &#45;&#45;git-path bricks/core_brick \\n  &#45;&#45;git-ref my_structure_mason \\n  &#45;&#45;global-->
 
 
 

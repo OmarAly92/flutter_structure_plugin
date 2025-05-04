@@ -15,7 +15,11 @@ kotlin {
 repositories {
     mavenCentral()
 }
-
+sourceSets {
+    main {
+        resources.srcDir("src/main/resources")
+    }
+}
 apply(plugin = "org.jetbrains.intellij")
 
 // Configure Gradle IntelliJ Plugin
@@ -24,6 +28,10 @@ intellij {
     version.set("2023.1.5")
     type.set("IC") // Target IDE Platform
     plugins.set(listOf("terminal"))
+}
+
+tasks.processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 tasks {
