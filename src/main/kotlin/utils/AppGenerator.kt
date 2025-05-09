@@ -11,7 +11,10 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.plugins.terminal.TerminalToolWindowManager
 import screen_plugin.ui.ScreenNotifier
 import java.io.IOException
-import java.util.concurrent.CompletableFuture
+import java.io.*
+import java.net.URL
+import java.nio.file.Files
+import java.util.zip.ZipInputStream
 
 class AppGenerator {
     companion object {
@@ -117,6 +120,112 @@ class AppGenerator {
 
         private fun showError(project: Project, message: String) {
             Messages.showErrorDialog(project, "\u274C $message", "Flutter Structure Generator")
+        }
+
+        private fun generateFromTemplate(
+            brickPath: String,
+            outputPath: String,
+            vars: Map<String, String>? = null
+        ) {
+            val inputDir = File(brickPath)
+            val outputDir = File(outputPath)
+
+            if (!inputDir.exists() || !inputDir.isDirectory) {
+                throw Exception("Brick path does not exist: $brickPath")
+            }
+
+            inputDir.walkTopDown().forEach { file ->
+                if (file.isFile) {
+                    val relativePath = file.relativeTo(inputDir).path
+                    val parsedPath = replaceVars(relativePath, vars)
+                    val outputFile = File(outputDir, parsedPath)
+
+                    outputFile.parentFile.mkdirs()
+                    var content = file.readText()
+                    content = replaceVars(content, vars)
+                    outputFile.writeText(content)
+                }
+            }
+        }
+
+        private fun replaceVars(input: String, vars: Map<String, String>?): String {
+            val regex = Regex("""\{\{(\w+)\}\}""")
+            return regex.replace(input) { matchResult ->
+                val key = matchResult.groupValues[1]
+                vars?.get(key) ?: ""
+            }
+        }
+
+
+        fun generateFromTemplateFromGitHub(
+            project: Project,
+            githubRepoUrl: String, // e.g. "https://github.com/user/repo"
+            branch: String = "master",
+            brickSubPath: String,  // e.g. "bricks/my_template"
+            outputPath: String,
+            vars: Map<String, String>? = null
+        ) {
+            try {
+                val tempDir = Files.createTempDirectory("github_template").toFile()
+                val zipUrl = "$githubRepoUrl/archive/refs/heads/$branch.zip"
+                val zipFile = File(tempDir, "repo.zip")
+
+                // Download ZIP
+                URL(zipUrl).openStream().use { input ->
+                    FileOutputStream(zipFile).use { output -> input.copyTo(output) }
+                }
+
+                // Extract ZIP
+                val extractDir = File(tempDir, "extracted")
+                unzip(zipFile, extractDir)
+
+                // Locate brick path
+                val repoName = githubRepoUrl.substringAfterLast("/")
+                val brickPath = File(extractDir, "$repoName-$branch/$brickSubPath")
+                if (!brickPath.exists()) throw Exception("Brick path not found in repo")
+
+                // Use existing logic
+                generateFromTemplate(
+                    brickPath = brickPath.path,
+                    outputPath = outputPath,
+                    vars = vars
+                )
+
+                // Refresh VFS on UI thread
+                ApplicationManager.getApplication().invokeLater {
+                    val outputFile = File(outputPath)
+                    val vFile = com.intellij.openapi.vfs.LocalFileSystem.getInstance()
+                        .refreshAndFindFileByIoFile(outputFile)
+                    if (vFile != null) {
+                        VfsUtil.markDirtyAndRefresh(true, true, true, vFile)
+                    }
+                }
+                tempDir.deleteRecursively()
+            } catch (e: Exception) {
+                ApplicationManager.getApplication().invokeLater {
+                    showError(project, """"Failed to generate template: ${e.message}
+                        Please check your network connection
+                    """.trimMargin())
+                }
+                e.printStackTrace()
+            }
+        }
+
+        private fun unzip(zipFile: File, targetDir: File) {
+            ZipInputStream(FileInputStream(zipFile)).use { zipIn ->
+                var entry = zipIn.nextEntry
+                while (entry != null) {
+                    val newFile = File(targetDir, entry.name)
+                    if (entry.isDirectory) {
+                        newFile.mkdirs()
+                    } else {
+                        newFile.parentFile.mkdirs()
+                        FileOutputStream(newFile).use { zipIn.copyTo(it) }
+                    }
+                    zipIn.closeEntry()
+                    entry = zipIn.nextEntry
+                }
+            }
         }
 
     }

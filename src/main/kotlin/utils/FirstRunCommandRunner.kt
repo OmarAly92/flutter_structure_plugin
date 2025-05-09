@@ -10,20 +10,20 @@ import java.io.File
 class FirstRunCommandRunner : StartupActivity {
 
     override fun runActivity(project: Project) {
-        val pluginId = PluginId.getId("de.omar.clean_architecture_plugin")
-        val plugin = PluginManagerCore.getPlugin(pluginId)
-        val currentVersion = plugin?.version ?: return
-
-        val pluginConfigDir = File(PathManager.getConfigPath(), "flutter_structure_plugin")
-        if (!pluginConfigDir.exists()) pluginConfigDir.mkdirs()
-
-        val versionFile = File(pluginConfigDir, "last_version.txt")
-        val lastVersion = if (versionFile.exists()) versionFile.readText().trim() else null
-
-        if (lastVersion != currentVersion) {
-            runMasonCommand(project)
-            versionFile.writeText(currentVersion)
-        }
+//        val pluginId = PluginId.getId("de.omar.clean_architecture_plugin")
+//        val plugin = PluginManagerCore.getPlugin(pluginId)
+//        val currentVersion = plugin?.version ?: return
+//
+//        val pluginConfigDir = File(PathManager.getConfigPath(), "flutter_structure_plugin")
+//        if (!pluginConfigDir.exists()) pluginConfigDir.mkdirs()
+//
+//        val versionFile = File(pluginConfigDir, "last_version.txt")
+//        val lastVersion = if (versionFile.exists()) versionFile.readText().trim() else null
+//
+//        if (lastVersion != currentVersion) {
+//            runMasonCommand(project)
+//            versionFile.writeText(currentVersion)
+//        }
     }
 
     private fun runMasonCommand(project: Project) {
