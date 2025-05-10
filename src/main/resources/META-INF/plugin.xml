@@ -13,7 +13,7 @@
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
     <depends>com.intellij.modules.platform</depends>
-    <depends>org.jetbrains.plugins.terminal</depends>
+<!--    <depends>org.jetbrains.plugins.terminal</depends>-->
     <actions>
         <action
             id="clean_arch_plugin.action.CleanArchActionGroup"

@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.flutter-structures"
-version = "1.0.6-SNAPSHOT"
+version = "1.0.5-SNAPSHOT"
 
 
 kotlin {
@@ -27,7 +27,7 @@ apply(plugin = "org.jetbrains.intellij")
 intellij {
     version.set("2023.1.5")
     type.set("IC") // Target IDE Platform
-    plugins.set(listOf("terminal"))
+//    plugins.set(listOf("terminal"))
 }
 
 tasks.processResources {

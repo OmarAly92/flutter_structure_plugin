@@ -1,18 +1,16 @@
 package utils
 
-import com.intellij.notification.NotificationGroupManager
-import com.intellij.notification.NotificationType
-import com.intellij.notification.Notifications
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.plugins.terminal.TerminalToolWindowManager
 import screen_plugin.ui.ScreenNotifier
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.IOException
-import java.io.*
-import java.net.URL
+import java.net.URI
 import java.nio.file.Files
 import java.util.zip.ZipInputStream
 
@@ -90,33 +88,33 @@ class AppGenerator {
             }.toString()
         }
 
-        fun runInTerminalSmart(project: Project, command: String, retry: Boolean = true) {
-            ApplicationManager.getApplication().invokeLater {
-                try {
-                    val terminalManager = TerminalToolWindowManager.getInstance(project)
-                    @Suppress("DEPRECATION")
-                    val terminalWidget = terminalManager.createLocalShellWidget(
-                        project.basePath ?: ".", "Flutter Generator"
-                    )
-                    terminalWidget.executeCommand(command)
-                    showNotification(project, "✅ Dart command sent to terminal", command)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    showError(project, "❌ Failed to open terminal or send command.\n${e.message}")
+//        fun runInTerminalSmart(project: Project, command: String, retry: Boolean = true) {
+//            ApplicationManager.getApplication().invokeLater {
+//                try {
+//                    val terminalManager = TerminalToolWindowManager.getInstance(project)
+//                    @Suppress("DEPRECATION")
+//                    val terminalWidget = terminalManager.createLocalShellWidget(
+//                        project.basePath ?: ".", "Flutter Generator"
+//                    )
+//                    terminalWidget.executeCommand(command)
+//                    showNotification(project, "✅ Dart command sent to terminal", command)
+//                } catch (e: Exception) {
+//                    e.printStackTrace()
+//                    showError(project, "❌ Failed to open terminal or send command.\n${e.message}")
+//
+//                }
+//            }
+//        }
 
-                }
-            }
-        }
-
-        private fun showNotification(project: Project, title: String, content: String) {
-            val notificationGroup = NotificationGroupManager.getInstance()
-                .getNotificationGroup("Flutter Structure Generator Group")
-
-            val notification = notificationGroup
-                .createNotification(title, content, NotificationType.INFORMATION)
-
-            Notifications.Bus.notify(notification, project)
-        }
+//        private fun showNotification(project: Project, title: String, content: String) {
+//            val notificationGroup = NotificationGroupManager.getInstance()
+//                .getNotificationGroup("Flutter Structure Generator Group")
+//
+//            val notification = notificationGroup
+//                .createNotification(title, content, NotificationType.INFORMATION)
+//
+//            Notifications.Bus.notify(notification, project)
+//        }
 
         private fun showError(project: Project, message: String) {
             Messages.showErrorDialog(project, "\u274C $message", "Flutter Structure Generator")
@@ -171,10 +169,12 @@ class AppGenerator {
                 val zipFile = File(tempDir, "repo.zip")
 
                 // Download ZIP
-                URL(zipUrl).openStream().use { input ->
-                    FileOutputStream(zipFile).use { output -> input.copyTo(output) }
+                val uri = URI(zipUrl)
+                uri.toURL().openStream().use { input ->
+                    FileOutputStream(zipFile).use { output ->
+                        input.copyTo(output)
+                    }
                 }
-
                 // Extract ZIP
                 val extractDir = File(tempDir, "extracted")
                 unzip(zipFile, extractDir)
