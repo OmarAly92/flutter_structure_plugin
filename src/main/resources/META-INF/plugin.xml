@@ -56,7 +56,7 @@
         <action
             id="core_plugin.action.CoreActionGenerateFlutter"
             class="core_plugin.action.CoreActionGenerateFlutter"
-            text="Core Generator"
+            text="Core Generator (Beta)"
             icon="AllIcons.Actions.NewFolder"
             description="Trigger Screen generator">
             <add-to-group anchor="after"
@@ -76,9 +76,9 @@
 <!--    </extensions>-->
 
 
-    <extensions defaultExtensionNs="com.intellij">
-        <postStartupActivity implementation="utils.FirstRunCommandRunner"/>
-    </extensions>
+<!--    <extensions defaultExtensionNs="com.intellij">-->
+<!--        <postStartupActivity implementation="utils.FirstRunCommandRunner"/>-->
+<!--    </extensions>-->
 </idea-plugin>
 
 
