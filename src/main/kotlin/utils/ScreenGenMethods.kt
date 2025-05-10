@@ -52,7 +52,7 @@ class ScreenGenMethods {
         ): String {
             val className = AppGenerator.snakeToCamelCase(root) + "Screen"
             val bodyName = AppGenerator.snakeToCamelCase(root) + "Body()"
-            val packageImport = if (isScreen) "package:${flutterPackageName}" else "package:${flutterPackageName}/$root/presentation"
+            val packageImport = "package:${flutterPackageName}/$root/presentation"
             val content = """
         import '$packageImport/${root}_screen/ui/widgets/${root}_body.dart';
         import 'package:flutter/material.dart';

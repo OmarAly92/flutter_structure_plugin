@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.testFramework.utils.vfs.getFile
 import screen_plugin.ui.ScreenDialog
 import utils.AppGenerator
 import utils.ScreenGenMethods
